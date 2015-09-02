@@ -17,4 +17,16 @@ std::vector<uint8_t> xor_buffers(const std::vector<uint8_t>& b1,
     return ret;
 }
 
+std::vector<uint8_t> xor_repeating(const std::vector<uint8_t> &large,
+                                   const std::vector<uint8_t> &small)
+{
+    std::vector<uint8_t> ret;
+    ret.reserve(large.size());
+
+    for(size_t i = 0 ; i < large.size() ; ++i) {
+        ret.push_back( large[i] ^ small[i % small.size()] );
+    }
+
+    return ret;
+}
 
