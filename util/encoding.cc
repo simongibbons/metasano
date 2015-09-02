@@ -92,4 +92,47 @@ std::string encode_base64(const std::vector<uint8_t>& bs)
     return ret;
 }
 
+static const uint8_t from_base64[] =
+{ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,  62, 255,  62, 255,  63,
+   52,  53,  54,  55,  56,  57,  58,  59,  60,  61, 255, 255,   0, 255, 255, 255,
+  255,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+   15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25, 255, 255, 255, 255,  63,
+  255,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
+   41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51, 255, 255, 255, 255, 255
+};
 
+// TODO: While this works for any properly encoded base64 strings it does
+// absolutely NO error checking / sanitizing....... this is a BAD THING.
+std::vector<uint8_t> decode_base64(const std::string& s)
+{
+    std::vector<uint8_t> ret;
+    const uint8_t *sarr = reinterpret_cast<const uint8_t*>(s.c_str());
+
+    uint8_t block[3];
+
+    for(size_t i = 0 ; i < (s.size() / 4) ; ++i) {
+        std::fill(block, block+3, 0);
+        block[0] = (from_base64[sarr[4*i + 0]] << 2) +
+                   ((from_base64[sarr[4*i + 1]] & 0x30) >> 4);
+
+        block[1] = ((from_base64[sarr[4*i + 1]] & 0xf) << 4 ) +
+                   ((from_base64[sarr[4*i + 2]] & 0x3c) >> 2);
+
+        block[2] = ((from_base64[sarr[4*i +2]] &0x3) << 6) +
+                     from_base64[sarr[4*i+3]];
+
+        for(size_t j = 0 ; j < 3 ; ++j) {
+            ret.push_back(block[j]);
+        }
+    }
+
+    //Trim any extras due to padding
+    size_t pad_count = 0;
+    for(auto rit = s.rbegin() ; *rit == '=' ; ++rit, pad_count++) {}
+
+    ret.resize( ret.size() - pad_count);
+
+    return ret;
+}
