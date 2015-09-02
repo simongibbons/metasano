@@ -25,7 +25,7 @@ std::string encode_hex(const std::vector<uint8_t>& bs)
 {
     std::stringstream stream;
     for(auto byte : bs ) {
-        stream << std::hex << static_cast<int>(byte);
+        stream << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(byte);
     }
     return stream.str();
 }
