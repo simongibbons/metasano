@@ -71,3 +71,21 @@ double score_english( const std::string& s)
     return score;
 }
 
+uint64_t hamming_distance(const std::vector<uint8_t>& s1, const std::vector<uint8_t> &s2)
+{
+    if(s1.size() != s2.size()) {
+        throw "ERROR: hamming distance undefined for different length strings";
+    }
+
+    uint64_t dist = 0;
+
+    for( size_t i = 0 ; i < s1.size() ; ++i ) {
+        uint8_t diff = s1[i] ^ s2[i];
+        while( diff > 0 ) {
+            dist += diff % 2;
+            diff = diff >> 1;
+        }
+    }
+
+    return dist;
+}
