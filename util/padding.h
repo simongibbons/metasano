@@ -3,6 +3,15 @@
 #include <vector>
 #include <cstdint>
 
+#include <exception>
+#include <stdexcept>
+
+class InvalidPadding : public std::runtime_error {
+public:
+    InvalidPadding() : runtime_error("Invalid Padding")
+    {}
+};
+
 template <typename Container>
 Container pkcs7_pad(const Container& input, uint8_t block_size)
 {
@@ -21,3 +30,22 @@ Container pkcs7_pad(const Container& input, uint8_t block_size)
     return ret;
 }
 
+template <typename Container>
+Container pkcs7_unpad(const Container &input)
+{
+    size_t expected_pad = input.back();
+    size_t actual_pad = 0;
+    for(auto rit = input.rbegin() ; rit != input.rend() ; ++rit) {
+        if(*rit == expected_pad) {
+            actual_pad++;
+        } else {
+            break;
+        }
+    }
+
+    if(expected_pad != actual_pad) {
+        throw InvalidPadding();
+    }
+
+    return Container(input.begin(), input.end() - actual_pad);
+}
