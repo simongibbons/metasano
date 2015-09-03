@@ -16,7 +16,7 @@ libutil.a: $(UTILOBJECTS)
 	$(CXX) -c $(CFLAGS) $< -o $@
 
 %.exe: %.cc libutil.a
-	$(CXX) $(CFLAGS) -L. $< -lutil -o $@
+	$(CXX) $(CFLAGS) -L. $< -lssl -lutil -o $@
 
 clean:
 	rm -rf $(UTILOBJECTS)
