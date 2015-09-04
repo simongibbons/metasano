@@ -3,6 +3,8 @@
 #include <vector>
 #include <cstdint>
 
+std::vector<uint8_t> generate_random_key(uint64_t key_size);
+
 std::vector<uint8_t> AES128_encrypt_block(const std::vector<uint8_t>& block,
                                           const std::vector<uint8_t>& key);
 

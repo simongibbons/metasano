@@ -3,6 +3,7 @@
 
 #include <openssl/aes.h>
 #include <iostream>
+#include <random>
 
 std::vector<uint8_t> AES128_encrypt_block(const std::vector<uint8_t>& block,
                                           const std::vector<uint8_t>& key)
@@ -91,3 +92,20 @@ std::vector<uint8_t> AES128_CBC_decrypt(const std::vector<uint8_t>& ctext,
 
     return ptext;
 }
+
+// I wouldn't trust this for an actual cryptograpic implimentation but
+// this is good enough for a fairly non-deterministic key generator.
+std::vector<uint8_t> generate_random_key(uint64_t key_size = 16)
+{
+    std::random_device rd;
+    std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+    std::vector<uint8_t> key;
+
+    for( uint64_t i = 0 ; i < key_size ; ++i ) {
+        key.push_back(dist(rd));
+    }
+
+    return key;
+}
+
