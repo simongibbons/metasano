@@ -11,6 +11,9 @@ std::vector<uint8_t> AES128_encrypt_block(const std::vector<uint8_t>& block,
 std::vector<uint8_t> AES128_decrypt_block(const std::vector<uint8_t>& block,
                                           const std::vector<uint8_t>& key);
 
+std::vector<uint8_t> AES128_ECB_encrypt(const std::vector<uint8_t>& ptext,
+                                        const std::vector<uint8_t>& key);
+
 std::vector<uint8_t> AES128_CBC_encrypt(const std::vector<uint8_t>& ptext,
                                         const std::vector<uint8_t>& key,
                                         const std::vector<uint8_t>& iv);

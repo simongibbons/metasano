@@ -33,6 +33,44 @@ std::vector<uint8_t> AES128_decrypt_block(const std::vector<uint8_t>& block,
     return out;
 }
 
+std::vector<uint8_t> AES128_ECB_encrypt(const std::vector<uint8_t>& ptext,
+                                        const std::vector<uint8_t>& key)
+{
+    size_t nblocks = ptext.size() / 16;
+
+    std::vector<uint8_t> ctext;
+    ctext.resize(ptext.size());
+
+    AES_KEY wctx;
+
+    AES_set_encrypt_key(key.data(), 128, &wctx);
+
+    for(size_t i = 0 ; i < nblocks ; ++i) {
+        AES_encrypt(ptext.data() + 16*i, ctext.data() + 16*i, &wctx);
+    }
+
+    return ctext;
+}
+
+std::vector<uint8_t> AES128_ECB_decrypt(const std::vector<uint8_t>& ctext,
+                                        const std::vector<uint8_t>& key)
+{
+    size_t nblocks = ctext.size() / 16;
+
+    std::vector<uint8_t> ptext;
+    ptext.resize(ctext.size());
+
+    AES_KEY wctx;
+
+    AES_set_decrypt_key(key.data(), 128, &wctx);
+
+    for(size_t i = 0 ; i < nblocks ; ++i) {
+        AES_decrypt(ctext.data() + 16*i, ptext.data() + 16*i, &wctx);
+    }
+
+    return ptext;
+}
+
 std::vector<uint8_t> AES128_CBC_encrypt(const std::vector<uint8_t>& ptext,
                                         const std::vector<uint8_t>& key,
                                         const std::vector<uint8_t>& iv)
