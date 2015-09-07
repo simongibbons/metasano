@@ -24,9 +24,22 @@ std::map< std::string, std::string > parse_kv_cookie(const std::string &s)
         }
         auto it = token.find('=');
         std::string key(token.begin(), token.begin() + it);
-        std::string value(token.begin() + it, token.end());
+        std::string value(token.begin() + it + 1, token.end());
         ret[key] = value;
     }
 
+    return ret;
+}
+
+std::string encode_kv_cookie(const std::map<std::string, std::string> &cookie)
+{
+    std::stringstream ss;
+
+    for(auto& kv : cookie) {
+        ss << kv.first << "=" << kv.second << "&";
+    }
+
+    std::string ret = ss.str();
+    if(ret.size() > 0 ) ret.erase(ret.size() - 1);
     return ret;
 }

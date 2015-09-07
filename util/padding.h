@@ -43,7 +43,7 @@ Container pkcs7_unpad(const Container &input)
         }
     }
 
-    if(expected_pad != actual_pad) {
+    if(expected_pad > actual_pad) {
         throw InvalidPadding();
     }
 
