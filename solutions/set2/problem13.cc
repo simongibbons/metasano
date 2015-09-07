@@ -40,14 +40,17 @@ int main()
     // Wanted block is "admin" plus the correct padding
     std::string wanted_block = pkcs7_pad(std::string("admin"), 16);
 
+    // Generate Profile with desired block in
     std::string input = std::string(10, 'a') + wanted_block;
     auto ctext = encrypted_profile_for(input);
 
     std::vector<uint8_t> block(ctext.begin() + 16, ctext.begin() + 32);
 
+    // Generate dummpy profile
     auto admin_profile = encrypted_profile_for("me@hacked.com");
-    admin_profile.resize(admin_profile.size() - 16);
 
+    // Replace the target block with our crafted one.
+    admin_profile.resize(admin_profile.size() - 16);
     for(size_t i = 0 ; i < 16 ; ++i) {
         admin_profile.push_back(block[i]);
     }
