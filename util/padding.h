@@ -47,5 +47,6 @@ Container pkcs7_unpad(const Container &input)
         throw InvalidPadding();
     }
 
-    return Container(input.begin(), input.end() - actual_pad);
+    return Container(input.begin(), input.end() - expected_pad);
 }
+
