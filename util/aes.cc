@@ -147,3 +147,59 @@ std::vector<uint8_t> generate_random_key(uint64_t key_size = 16)
     return key;
 }
 
+class AES128_CTR_Keystream {
+    union {
+        uint64_t counter[2];
+        uint8_t bytes[16];
+    } state;
+
+    uint8_t block[16];
+    uint8_t position;
+
+    AES_KEY wctx;
+
+public:
+    AES128_CTR_Keystream(const std::vector<uint8_t> &key, const uint64_t nonce)
+    {
+        state.counter[0] = nonce;
+        state.counter[1] = 0;
+        AES_set_encrypt_key(key.data(), 128, &wctx);
+        generate_next_block();
+    }
+
+    uint8_t next_byte() {
+        if(position >= 16) generate_next_block();
+        return block[position++];
+    }
+
+private:
+    void generate_next_block() {
+        AES_encrypt(state.bytes, block, &wctx);
+        state.counter[1]++;
+        position = 0;
+    }
+
+};
+
+std::vector<uint8_t> AES128_CTR_encrypt(const std::vector<uint8_t>& ptext,
+                                        const std::vector<uint8_t>& key,
+                                        const uint64_t nonce)
+{
+    AES128_CTR_Keystream ks(key, nonce);
+
+    std::vector<uint8_t> ctext;
+    ctext.reserve(ptext.size());
+
+    for(auto byte : ptext) {
+        ctext.push_back(byte ^ ks.next_byte());
+    }
+
+    return ctext;
+}
+
+std::vector<uint8_t> AES128_CTR_decrypt(const std::vector<uint8_t>& ctext,
+                                        const std::vector<uint8_t>& key,
+                                        const uint64_t nonce)
+{
+    return AES128_CTR_encrypt(ctext, key, nonce);
+}
