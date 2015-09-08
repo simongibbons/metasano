@@ -149,7 +149,10 @@ std::vector<uint8_t> generate_random_key(uint64_t key_size = 16)
 
 class AES128_CTR_Keystream {
     union {
-        uint64_t counter[2];
+        struct {
+            uint64_t nonce;
+            uint64_t counter;
+        };
         uint8_t bytes[16];
     } state;
 
@@ -161,8 +164,8 @@ class AES128_CTR_Keystream {
 public:
     AES128_CTR_Keystream(const std::vector<uint8_t> &key, const uint64_t nonce)
     {
-        state.counter[0] = nonce;
-        state.counter[1] = 0;
+        state.nonce = nonce;
+        state.counter = 0;
         AES_set_encrypt_key(key.data(), 128, &wctx);
         generate_next_block();
     }
@@ -175,7 +178,7 @@ public:
 private:
     void generate_next_block() {
         AES_encrypt(state.bytes, block, &wctx);
-        state.counter[1]++;
+        state.counter++;
         position = 0;
     }
 
