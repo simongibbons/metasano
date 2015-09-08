@@ -148,11 +148,12 @@ std::vector<uint8_t> generate_random_key(uint64_t key_size = 16)
 }
 
 class AES128_CTR_Keystream {
+    // There are portability issues with this - it assumes a little endian
+    // processor, as well as some UB with the use of a union to reinterpret
+    // the two uint64_t as an array of bytes. YMMV (and check this if it)
+    // becomes a source of bugs later........
     union {
-        struct {
-            uint64_t nonce;
-            uint64_t counter;
-        };
+        uint64_t counter[2];
         uint8_t bytes[16];
     } state;
 
@@ -164,8 +165,8 @@ class AES128_CTR_Keystream {
 public:
     AES128_CTR_Keystream(const std::vector<uint8_t> &key, const uint64_t nonce)
     {
-        state.nonce = nonce;
-        state.counter = 0;
+        state.counter[0] = nonce;
+        state.counter[1] = 0;
         AES_set_encrypt_key(key.data(), 128, &wctx);
         generate_next_block();
     }
@@ -178,7 +179,7 @@ public:
 private:
     void generate_next_block() {
         AES_encrypt(state.bytes, block, &wctx);
-        state.counter++;
+        state.counter[1]++;
         position = 0;
     }
 
