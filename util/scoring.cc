@@ -49,6 +49,7 @@ static const std::unordered_map<char, double> english_letter_scores
  {'8', 0.00000},
  {'9', 0.00000},
  {'\'', 0.0000},
+ {'/', 0.00000},
  {'"', 0.00000},
  {'!', 0.00000},
  {'?', 0.00000},
