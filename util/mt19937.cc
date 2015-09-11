@@ -34,8 +34,8 @@ void mt19937::twist()
 {
     index = 0;
     for(uint32_t i = 0 ; i < n ; ++i) {
-        uint32_t y = (state[i] & 0x80000000) +
-                     (state[(i + 1) % n] & 0x7fffffff);
+        uint32_t y = (state[i] & 0x80000000) + //Upper 32 - r bits
+                     (state[(i + 1) % n] & 0x7fffffff); //Lower r bits
         state[i] = state[(i + m) % n] ^ y >> 1;
 
         if(y % 2 != 0)
