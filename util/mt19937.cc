@@ -12,7 +12,7 @@ uint32_t mt19937::next()
     if(index >= n) twist();
 
     uint32_t y = state[index++];
-    y = y ^ (y >> u);
+    y = y ^ ((y >> u) & d);
     y = y ^ ((y << s) & b);
     y = y ^ ((y << t) & c);
     y = y ^ (y >> l);
@@ -54,4 +54,31 @@ void mt19937::print_state()
         std::cout << state[i] << " ";
     }
     std::cout << std::endl;
+}
+
+std::vector<uint8_t> mt19937_encrypt(const std::vector<uint8_t>& ptext,
+                                     const uint32_t seed)
+{
+    mt19937 rng(seed);
+    
+    uint32_t state;
+    uint32_t mask = 0;
+
+    std::vector<uint8_t> ctext;
+    for(size_t i = 0 ; i < ptext.size() ; ++i) {
+        if(mask == 0) {
+            mask = 0x000000ff;
+            state = rng.next();
+        }
+        ctext.push_back(ptext[i] ^ (state & mask) );
+        mask <<= 1;
+    }
+
+    return ctext;
+}
+
+std::vector<uint8_t> mt19937_decrypt(const std::vector<uint8_t>& ctext,
+                                     const uint32_t seed)
+{
+    return mt19937_encrypt(ctext, seed);
 }
