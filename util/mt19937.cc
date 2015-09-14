@@ -43,6 +43,11 @@ void mt19937::twist()
     }
 }
 
+void mt19937::set_state(std::array<uint32_t, n> new_state)
+{
+    state = new_state;
+}
+
 void mt19937::print_state()
 {
     for(uint32_t i = 0 ; i < n ; ++i) {

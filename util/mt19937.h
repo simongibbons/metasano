@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 
 class mt19937 {
     static const uint32_t w = 32, n = 624, m = 397, r = 31;
@@ -12,7 +13,7 @@ class mt19937 {
     static const uint32_t f = 1812433253;
 
     uint32_t index;
-    uint32_t state[n];
+    std::array<uint32_t, n> state;
 
 public:
     mt19937(uint32_t seed);
@@ -20,6 +21,7 @@ public:
     uint32_t next();
 
     void print_state();
+    void set_state(std::array<uint32_t, n> state);
 
 private:
     void twist();
