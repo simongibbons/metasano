@@ -12,7 +12,7 @@ uint32_t mt19937::next()
     if(index >= n) twist();
 
     uint32_t y = state[index++];
-    y = y ^ ((y >> u) & d);
+    y = y ^ (y >> u);
     y = y ^ ((y << s) & b);
     y = y ^ ((y << t) & c);
     y = y ^ (y >> l);
